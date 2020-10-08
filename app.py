@@ -31,3 +31,22 @@ def handle_questions(num):
     question = survey.questions[int(num)]
 
     return render_template("/question.html", question=question)
+
+@app.route("/answer", methods=["POST"])
+def store_answer():
+
+    answer = request.form["answer"]
+    responses.append(answer)
+    question_count = len(responses)
+    if question_count == len(survey.questions):
+
+        return redirect("/thanks")
+
+    return redirect(f"/question/{question_count}")
+
+@app.route("/thanks")
+def thank_client():
+
+    return render_template("/completion.html")
+
+
