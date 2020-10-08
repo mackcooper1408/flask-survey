@@ -16,7 +16,10 @@ responses = list()
 def show_home():
     """Home Page"""
 
+    session["responses"] = list()
+
     return render_template("/survey_start.html")
+
 
 @app.route("/begin", methods=["POST"])
 def survey_redict():
@@ -32,11 +35,15 @@ def handle_questions(num):
 
     return render_template("/question.html", question=question)
 
+
 @app.route("/answer", methods=["POST"])
 def store_answer():
-
     answer = request.form["answer"]
+
+    responses = session["responses"]
     responses.append(answer)
+    session["responses"] = responses
+
     question_count = len(responses)
     if question_count == len(survey.questions):
 
@@ -44,9 +51,8 @@ def store_answer():
 
     return redirect(f"/question/{question_count}")
 
+
 @app.route("/thanks")
 def thank_client():
 
     return render_template("/completion.html")
-
-
