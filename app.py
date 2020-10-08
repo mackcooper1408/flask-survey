@@ -9,9 +9,6 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 debug = DebugToolbarExtension(app)
 
 
-responses = list()
-
-
 @app.route("/")
 def show_home():
     """Home Page"""
@@ -27,21 +24,18 @@ def survey_redict():
     return redirect("/question/0")
 
 
-@app.route("/question/<num>")
+@app.route("/question/<int:num>")
 def handle_questions(num):
     """Handling the questions"""
 
-    num = int(num)
-  
     if len(session["responses"]) == len(survey.questions):
-        
         return redirect("/thanks")
 
     if num is not len(session["responses"]):
         num = len(session["responses"])
         return redirect(f"/question/{num}")
+
     question = survey.questions[num]
-    breakpoint()
     return render_template("/question.html", question=question)
 
 
@@ -54,10 +48,6 @@ def store_answer():
     session["responses"] = responses
 
     question_count = len(responses)
-    # breakpoint()
-    if question_count == len(survey.questions):
-
-        return redirect("/thanks")
 
     return redirect(f"/question/{question_count}")
 
