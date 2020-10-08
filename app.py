@@ -29,10 +29,12 @@ def handle_questions(num):
     """Handling the questions"""
 
     if len(session["responses"]) == len(survey.questions):
+        flash("You're done... Get over it...")
         return redirect("/thanks")
 
     if num is not len(session["responses"]):
         num = len(session["responses"])
+        flash(f"You are on question {num} you dummy!")
         return redirect(f"/question/{num}")
 
     question = survey.questions[num]
