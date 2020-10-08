@@ -31,8 +31,17 @@ def survey_redict():
 def handle_questions(num):
     """Handling the questions"""
 
-    question = survey.questions[int(num)]
+    num = int(num)
+  
+    if len(session["responses"]) == len(survey.questions):
+        
+        return redirect("/thanks")
 
+    if num is not len(session["responses"]):
+        num = len(session["responses"])
+        return redirect(f"/question/{num}")
+    question = survey.questions[num]
+    breakpoint()
     return render_template("/question.html", question=question)
 
 
@@ -45,6 +54,7 @@ def store_answer():
     session["responses"] = responses
 
     question_count = len(responses)
+    # breakpoint()
     if question_count == len(survey.questions):
 
         return redirect("/thanks")
