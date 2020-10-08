@@ -7,3 +7,5 @@ app.config['SECRET_KEY'] = "never-tell!"
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 debug = DebugToolbarExtension(app)
+
+
