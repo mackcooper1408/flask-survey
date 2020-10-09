@@ -1,6 +1,7 @@
-from flask import Flask, request, render_template, redirect, flash, session
+from flask import Flask, request, render_template, redirect, flash, session, url_for
 from flask_debugtoolbar import DebugToolbarExtension
-from surveys import satisfaction_survey as survey
+from surveys import satisfaction_survey, personality_quiz
+from surveys import surveys as survey_dict
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "never-tell!"
@@ -12,23 +13,28 @@ debug = DebugToolbarExtension(app)
 @app.route("/")
 def show_home():
     """Home Page"""
-
-    session["responses"] = list()
-
-    return render_template("/survey_start.html")
+    surveys = survey_dict
+    return render_template("/survey_start.html", surveys=surveys)
 
 
 @app.route("/begin", methods=["POST"])
-def survey_redict():
+def survey_redirect():
 
-    return redirect("/question/0")
+    session["responses"] = list()
+    session["current_survey"] = request.form["answer"]
+    survey = request.form["answer"]
+    return redirect(url_for("handle_questions", survey=survey, num=0))
 
 
-@app.route("/question/<int:num>")
-def handle_questions(num):
+@app.route("/<survey>/question/<int:num>")
+def handle_questions(survey, num):
     """Handling the questions"""
+    current_survey = None
+    for key in survey_dict:
+        if survey == key:
+            current_survey = survey_dict[key]
 
-    if len(session["responses"]) == len(survey.questions):
+    if len(session["responses"]) == len(current_survey.questions):
         flash("You're done... Get over it...")
         return redirect("/thanks")
 
@@ -37,7 +43,7 @@ def handle_questions(num):
         flash(f"You are on question {num} you dummy!")
         return redirect(f"/question/{num}")
 
-    question = survey.questions[num]
+    question = current_survey.questions[num]
     return render_template("/question.html", question=question)
 
 
@@ -51,7 +57,9 @@ def store_answer():
 
     question_count = len(responses)
 
-    return redirect(f"/question/{question_count}")
+    survey = session["current_survey"]
+
+    return redirect(f"/{survey}/question/{question_count}")
 
 
 @app.route("/thanks")

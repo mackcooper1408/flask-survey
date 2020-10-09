@@ -1,12 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
 
-  <h1> Survey Title Should Go Here</h1>
+  <h1>Time For a Survey!</h1>
   <p>
-    Survey Instructions Should Go Here
+    Which Survey Would You Like to Fill Out?
   </p>
 
   <form action="/begin" method="POST">
+    {% for survey in surveys%}
+      <p>
+        <input
+            type="radio"
+            name="answer"
+            value="{{survey}}">
+        {{survey}}
+      </p>
+     {% endfor %}
     <button>Start!</button>
   </form>
 

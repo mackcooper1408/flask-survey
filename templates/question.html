@@ -16,7 +16,12 @@
             value="{{choice}}">
         {{choice}}
       </p>
-     {% endfor %}
+      {% endfor %}
+      {% if question.allow_text %}
+      <p>
+        <input type="text" name="text-response" value="because it sucks...">
+      </p>
+      {% endif %}
 
     <button>Continue</button>
   </form>
